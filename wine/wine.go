@@ -1,7 +1,7 @@
 package wine
 
 import (
-	"debug/macho"
+	//"debug/macho"
 	//"fmt"
 	"net/http"
 	//"reflect"
