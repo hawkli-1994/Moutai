@@ -5,14 +5,10 @@ import "./moutai"
 
 func main() {
 	r := moutai.New()
-	r.GET("/index", func(c *moutai.Context) {
-		c.HTML(http.StatusOK, "<h1>Index Page</h1>")
-	})
+
 	v1 := r.Group("/v1")
 	{
-		v1.GET("/", func(c *moutai.Context) {
-			c.HTML(http.StatusOK, "<h1>Hello moutai</h1>")
-		})
+
 
 		v1.GET("/hello", func(c *moutai.Context) {
 			// expect /hello?name=lkrMacBookAir
