@@ -1,9 +1,11 @@
-package wine
+package moutai
 
 import (
 	//"debug/macho"
 	//"fmt"
 	"net/http"
+	"strings"
+
 	//"reflect"
 )
 
@@ -56,16 +58,21 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.engine.addRoute("POST", pattern, handler)
 }
 
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
+}
+
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
+	var middlewares []HandlerFunc
+	for _, group := range e.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	c := newContext(w, req)
+	c.handlers = middlewares
 	e.router.handle(c)
-	//route := genRouteKey(req.Method, req.URL.Path)
-	//handler, ok := e.routers[route]
-	//if ok {
-	//	handler(w, req)
-	//} else {
-	//	fmt.Fprintf(w, "404 NOT FOUND: %s\n", req.URL)
-	//}
+
 }
 
 func (e *Engine) Run(addr string) error {

@@ -11,10 +11,10 @@ Moutai是一个简单的web框架。
 >.
 ├── README.md
 ├── main.go
-└── wine
+└── moutai
     ├── context.go
     ├── go.mod
     ├── router.go
     ├── test_router.go
     ├── trie.go
-    └── wine.go
+    └── moutai.go
