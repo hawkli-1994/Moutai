@@ -1,6 +1,7 @@
 package moutai
 
 import (
+	"html/template"
 	//"debug/macho"
 	//"fmt"
 	"net/http"
@@ -24,6 +25,8 @@ type Engine struct {
 	*RouterGroup
 	router *router
 	groups []*RouterGroup
+	htmlTemplates *template.Template
+	funcMap template.FuncMap
 }
 
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
@@ -77,6 +80,7 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
 		}
 	}
 	c := newContext(w, req)
+	c.engine = e
 	c.handlers = middlewares
 	e.router.handle(c)
 
@@ -98,4 +102,12 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 
 func (e *Engine) Run(addr string) error {
 	return http.ListenAndServe(addr, e)
+}
+
+func (e *Engine) SetFuncMap(funcMap template.FuncMap) {
+	e.funcMap = funcMap
+}
+
+func (e *Engine) LoadHTMLGlob(pattern string) {
+	e.htmlTemplates = template.Must(template.New("").Funcs(e.funcMap).ParseGlob(pattern))
 }
