@@ -4,6 +4,7 @@ import (
 	//"debug/macho"
 	//"fmt"
 	"net/http"
+	"path"
 	"strings"
 
 	//"reflect"
@@ -58,6 +59,12 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.engine.addRoute("POST", pattern, handler)
 }
 
+func (group *RouterGroup) Static(relativePath string, root string) {
+	handler := group.createStaticHandler(relativePath, http.Dir(root))
+	urlPattern := path.Join(relativePath, "*filepath")
+	group.GET(urlPattern, handler)
+}
+
 func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
 	group.middlewares = append(group.middlewares, middlewares...)
 }
@@ -73,6 +80,20 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
 	c.handlers = middlewares
 	e.router.handle(c)
 
+}
+
+func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
+	absolutePath := path.Join(group.prefix, relativePath)
+	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+	return func(c *Context) {
+		file := c.Param("filepath")
+		_, err := fs.Open(file)
+		if err != nil {
+			c.SetStatus(http.StatusNotFound)
+			return
+		}
+		fileServer.ServeHTTP(c.Writer, c.Req)
+	}
 }
 
 func (e *Engine) Run(addr string) error {
