@@ -29,6 +29,8 @@ type Engine struct {
 	funcMap template.FuncMap
 }
 
+
+
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
 	newGroup := &RouterGroup{
@@ -44,6 +46,12 @@ func New() *Engine {
 	engine := &Engine{router: newRouter()}
 	engine.RouterGroup = &RouterGroup{engine:engine}
 	engine.groups = []*RouterGroup{engine.RouterGroup}
+	return engine
+}
+
+func Default() *Engine {
+	engine := New()
+	engine.Use(Logger(), Recover())
 	return engine
 }
 

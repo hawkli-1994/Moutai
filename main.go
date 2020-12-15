@@ -4,7 +4,7 @@ import "net/http"
 import "./moutai"
 
 func main() {
-	r := moutai.New()
+	r := moutai.Default()
 
 	v1 := r.Group("/v1")
 	{
