@@ -7,6 +7,8 @@ Moutai是一个简单的web框架。
 * 路由分组
 * 中间件
 * 模板渲染
+* Log
+* Recover
 ## 代码结构
 ```
 ├── README.md
@@ -20,3 +22,14 @@ Moutai是一个简单的web框架。
     ├── test_router.go
     └── trie.go
 ```
+## Quick Start
+
+* 定义路由
+
+* 路由分组
+
+* 添加中间件
+
+* 模板渲染
+
+* 启动
